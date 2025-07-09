@@ -1,21 +1,21 @@
-name: Doge Price Bot
+name: Post Doge Price Message
 
 on:
   schedule:
     - cron: '*/15 * * * *'  # every 15 minutes UTC
-  workflow_dispatch:        # manual trigger
+  workflow_dispatch:
 
 jobs:
-  run-bot:
+  post-message:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Node
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
       - run: npm install
-      - run: node bot.js
+      - run: node post-message.js
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
