@@ -13,27 +13,36 @@ const client = new Client({
 const token = process.env.DISCORD_TOKEN;
 const channelId = process.env.DISCORD_CHANNEL_ID;
 
-async function fetchDogePrice() {
+async function fetchPrices() {
+  // Fetch Dogecoin price in USD
   const response = await fetch('https://api.api-ninjas.com/v1/cryptoprice?symbol=DOGEUSD', {
     headers: { 'X-Api-Key': process.env.API_KEY },
   });
-
   if (!response.ok) throw new Error(`API error: ${response.statusText}`);
-
   const data = await response.json();
-  console.log('API response:', data);
+  console.log('Doge price API response:', data);
+  if (typeof data.price !== 'number') throw new Error('Unexpected API response format: price is not a number');
+  const priceUsd = data.price;
 
-  if (typeof data.price !== 'number') {
-    throw new Error('Unexpected API response format: price is not a number');
-  }
+  // Fetch USD to GBP exchange rate
+  const exchangeResponse = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=GBP');
+  if (!exchangeResponse.ok) throw new Error(`Exchange rate API error: ${exchangeResponse.statusText}`);
+  const exchangeData = await exchangeResponse.json();
+  console.log('Exchange rate API response:', exchangeData);
+  const usdToGbpRate = exchangeData.rates.GBP;
 
-  return data.price.toFixed(4);
+  const priceGbp = priceUsd * usdToGbpRate;
+
+  return {
+    usd: priceUsd.toFixed(4),
+    gbp: priceGbp.toFixed(4),
+  };
 }
 
 client.once('ready', async () => {
   try {
     console.log(`Logged in as ${client.user.tag}`);
-    const price = await fetchDogePrice();
+    const prices = await fetchPrices();
     const now = new Date().toUTCString();
     const channel = await client.channels.fetch(channelId);
 
@@ -42,8 +51,13 @@ client.once('ready', async () => {
       return;
     }
 
-    console.log(`Sending message to channel: ${channel.name}`);
-    await channel.send(`📈 **Dogecoin Price:** $${price}\n📅 **Updated:** ${now}`);
+    await channel.send(
+      `📈 **Dogecoin Price:**\n` +
+      `- USD: $${prices.usd}\n` +
+      `- GBP: £${prices.gbp}\n` +
+      `📅 **Updated:** ${now}`
+    );
+
     console.log('Message sent successfully');
   } catch (err) {
     console.error('❌ Error posting Doge price:', err.message);
