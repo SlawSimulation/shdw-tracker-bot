@@ -6,7 +6,7 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent, // optional, safe to include
+    GatewayIntentBits.MessageContent,
   ],
 });
 
@@ -21,6 +21,12 @@ async function fetchDogePrice() {
   if (!response.ok) throw new Error(`API error: ${response.statusText}`);
 
   const data = await response.json();
+  console.log('API response:', data);
+
+  if (typeof data.price !== 'number') {
+    throw new Error('Unexpected API response format: price is not a number');
+  }
+
   return data.price.toFixed(4);
 }
 
@@ -30,7 +36,15 @@ client.once('ready', async () => {
     const price = await fetchDogePrice();
     const now = new Date().toUTCString();
     const channel = await client.channels.fetch(channelId);
+
+    if (!channel) {
+      console.error('Channel not found!');
+      return;
+    }
+
+    console.log(`Sending message to channel: ${channel.name}`);
     await channel.send(`📈 **Dogecoin Price:** $${price}\n📅 **Updated:** ${now}`);
+    console.log('Message sent successfully');
   } catch (err) {
     console.error('❌ Error posting Doge price:', err.message);
   } finally {
