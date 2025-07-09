@@ -2,18 +2,20 @@ name: Update Bot Status
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # every 15 minutes UTC
-  workflow_dispatch:        # manual trigger
+    - cron: '*/5 * * * *'  # every 5 minutes UTC
+  workflow_dispatch:
 
 jobs:
   update-status:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
       - run: npm install
       - run: node update-status.js
         env:
