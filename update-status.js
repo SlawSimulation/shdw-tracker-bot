@@ -46,4 +46,24 @@ async function fetchPrices() {
 
 async function updateStatus() {
   try {
-    const prices =
+    const prices = await fetchPrices();
+    const statusMessage = `Dogecoin Price: USD $${prices.usd} | GBP £${prices.gbp}`;
+    await client.user.setActivity(statusMessage, { type: 'WATCHING' });
+    console.log(`✅ Status updated: ${statusMessage}`);
+  } catch (error) {
+    console.error('❌ Error updating status:', error.message);
+  }
+}
+
+client.once('ready', () => {
+  console.log(`🤖 Logged in as ${client.user.tag}`);
+
+  updateStatus(); // Initial update
+  setInterval(updateStatus, 15 * 60 * 1000); // Update every 15 minutes
+});
+
+client.login(token);
+
+// Optional debug logs
+client.on('error', console.error);
+client.on('warn', console.warn);
