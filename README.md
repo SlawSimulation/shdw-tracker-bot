@@ -1,0 +1,2 @@
+[![Update Bot Status](https://github.com/SlawSimulation/doge-tracker-bot/actions/workflows/update-status.yml/badge.svg)](https://github.com/SlawSimulation/doge-tracker-bot/actions/workflows/update-status.yml)
+[![Post Doge Price Message](https://github.com/SlawSimulation/doge-tracker-bot/actions/workflows/post-message.yml/badge.svg)](https://github.com/SlawSimulation/doge-tracker-bot/actions/workflows/post-message.yml)
