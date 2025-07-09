@@ -32,14 +32,14 @@ async function updateStatus() {
     console.log(`Status updated: ${status}`);
   } catch (e) {
     console.error('Failed to update status:', e);
-  } finally {
-    await client.destroy();
   }
 }
 
-client.once('ready', () => {
+client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}`);
-  updateStatus();
+  await updateStatus();
+  await client.destroy();  // disconnect so process can exit
+  process.exit(0);
 });
 
 client.login(token);
