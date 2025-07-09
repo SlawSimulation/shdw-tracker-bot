@@ -32,13 +32,14 @@ async function updateStatus() {
     console.log(`Status updated: ${status}`);
   } catch (e) {
     console.error('Failed to update status:', e);
+  } finally {
+    await client.destroy();
   }
 }
 
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
-  updateStatus(); // immediate update on startup
-  setInterval(updateStatus, 5 * 60 * 1000); // update every 5 minutes
+  updateStatus();
 });
 
 client.login(token);
