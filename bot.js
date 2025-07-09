@@ -21,8 +21,9 @@ async function fetchPrices() {
   if (!response.ok) throw new Error(`API error: ${response.statusText}`);
   const data = await response.json();
   console.log('Doge price API response:', data);
-  if (typeof data.price !== 'number') throw new Error('Unexpected API response format: price is not a number');
-  const priceUsd = data.price;
+
+  const priceUsd = Number(data.price);
+  if (isNaN(priceUsd)) throw new Error('Price is not a valid number');
 
   // Fetch USD to GBP exchange rate
   const exchangeResponse = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=GBP');
