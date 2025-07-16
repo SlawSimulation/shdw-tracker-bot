@@ -10,25 +10,20 @@ const token = process.env.DISCORD_TOKEN;
 const channelId = process.env.DISCORD_CHANNEL_ID;
 
 async function fetchPrices() {
-  // Fetch Dogecoin price in USD
-  const response = await fetch('https://api.api-ninjas.com/v1/cryptoprice?symbol=DOGEUSD', {
-    headers: { 'X-Api-Key': process.env.API_KEY },
-  });
+  // Fetch SHDW price in USD from CoinGecko
+  const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=genesysgo-shadow&vs_currencies=usd');
   if (!response.ok) {
-    throw new Error(`Crypto API error: ${response.status} ${response.statusText}`);
+    throw new Error(`CoinGecko API error: ${response.status} ${response.statusText}`);
   }
   const data = await response.json();
-  console.log('Doge price API response:', data);
+  console.log('SHDW price API response:', data);
 
-  if (!data.price) {
-    throw new Error('Price field missing from crypto API response');
-  }
-  const priceUsd = Number(data.price);
+  const priceUsd = Number(data["genesysgo-shadow"]?.usd);
   if (isNaN(priceUsd)) {
-    throw new Error('Price is not a valid number');
+    throw new Error('Invalid SHDW price');
   }
 
-  // Fetch USD to GBP exchange rate (no API key required)
+  // Fetch USD to GBP exchange rate
   const exchangeResponse = await fetch('https://open.er-api.com/v6/latest/USD');
   if (!exchangeResponse.ok) {
     throw new Error(`Exchange rate API error: ${exchangeResponse.status} ${exchangeResponse.statusText}`);
@@ -36,10 +31,10 @@ async function fetchPrices() {
   const exchangeData = await exchangeResponse.json();
   console.log('Exchange rate API response:', exchangeData);
 
-  if (!exchangeData.rates || !exchangeData.rates.GBP) {
+  const usdToGbpRate = exchangeData.rates?.GBP;
+  if (!usdToGbpRate) {
     throw new Error('GBP rate not found in exchange rate API response');
   }
-  const usdToGbpRate = exchangeData.rates.GBP;
 
   const priceGbp = priceUsd * usdToGbpRate;
 
@@ -61,12 +56,12 @@ client.once('ready', async () => {
     }
 
     await channel.send(
-      `📈 **Dogecoin Price:**\n- USD: $${prices.usd}\n- GBP: £${prices.gbp}\n📅 **Updated:** ${now}`
+      `📈 **SHDW (Shadow Token) Price:**\n- USD: $${prices.usd}\n- GBP: £${prices.gbp}\n📅 **Updated:** ${now}`
     );
 
     console.log('Message sent successfully');
   } catch (err) {
-    console.error('❌ Error posting Doge price:', err.message);
+    console.error('❌ Error posting SHDW price:', err.message);
   } finally {
     client.destroy();
   }

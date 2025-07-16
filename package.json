@@ -1,8 +1,14 @@
 {
-  "name": "doge-tracker",
+  "name": "shdw-tracker",
   "version": "1.0.0",
+  "description": "Discord bot that tracks SHDW (Shadow Token) price and posts updates",
   "main": "bot.js",
   "type": "module",
+  "scripts": {
+    "start": "node bot.js",
+    "post": "node post-message.js",
+    "status": "node update-status.js"
+  },
   "dependencies": {
     "discord.js": "^14.0.0",
     "node-fetch": "^3.3.2"

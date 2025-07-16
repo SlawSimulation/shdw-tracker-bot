@@ -1,4 +1,4 @@
-name: Update Bot Status
+name: Update SHDW Bot Status
 
 on:
   schedule:
@@ -20,4 +20,3 @@ jobs:
       - run: node update-status.js
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          API_KEY: ${{ secrets.API_KEY }}

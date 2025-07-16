@@ -1,4 +1,4 @@
-name: Post Doge Price Message
+name: Post SHDW Price Message
 
 on:
   schedule:
@@ -19,4 +19,3 @@ jobs:
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
-          API_KEY: ${{ secrets.API_KEY }}
